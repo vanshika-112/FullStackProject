@@ -30,7 +30,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view()),
     path('api/token/refresh/', TokenRefreshView.as_view()),
-    path("datasets/last-five/", LastFiveDatasetsView.as_view()),
+    path("api/datasets/last-five/", LastFiveDatasetsView.as_view()),
 ]
 
 if settings.DEBUG:

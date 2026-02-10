@@ -14,7 +14,7 @@ class MplCanvas(FigureCanvas):
 class App(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("CSV Analyzer Desktop App")
+        self.setWindowTitle("Desktop App")
         self.resize(600, 750)
 
         self.token = None  # JWT access token
@@ -140,7 +140,7 @@ class App(QWidget):
                     self.download_btn.setEnabled(True)
 
                 self.status_label.setText(
-                    f"Uploaded ✅ | Rows: {data['total_count']}"
+                    f"Uploaded | Rows: {data['total_count']}"
                 )
 
                 self.load_last_five()
@@ -149,7 +149,7 @@ class App(QWidget):
                 self.plot_chart(data["equipment_distribution"])
 
             else:
-                self.status_label.setText("Upload failed ❌")
+                self.status_label.setText("Upload failed!")
 
         except Exception as e:
             self.status_label.setText(f"Error: {str(e)}")

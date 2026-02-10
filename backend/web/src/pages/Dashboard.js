@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [file, setFile] = useState(null);
   const [datasets, setDatasets] = useState([]);
   const [chartData, setChartData] = useState(null);
+  const [summary, setSummary] = useState(null);
 
   const fetchLastFive = async () => {
     const res = await api.get("datasets/last-five/");
@@ -28,12 +29,9 @@ export default function Dashboard() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await api.post("api/upload/", formData, {
-    headers: {
-        "Content-Type": "multipart/form-data",
-    },
-    });
-    
+    const res = await api.post("upload/", formData);
+    setSummary(res.data);
+
     fetchLastFive();
 
     const dist = res.data.equipment_distribution;
@@ -50,25 +48,63 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h2>Dashboard</h2>
-
-      <input type="file" onChange={e => setFile(e.target.files[0])} />
-      <button onClick={upload}>Upload CSV</button>
-
+      <h2 align="center">Dashboard</h2>
+      <p align="center">Upload your file here : &emsp;   
+        <input type="file" onChange={e => setFile(e.target.files[0])} />
+        <br />
+        <br />
+        <button onClick={upload}>Upload CSV</button>
+      </p>
       {chartData && <Bar data={chartData} />}
 
-      <h3>Last 5 uploads</h3>
-      <ul>
-        {datasets.map(d => (
-          <li key={d.id}>
-            {d.file.split("/").pop()}
-            {" "}
-            <a href={`http://127.0.0.1:8000${d.pdf_url}`} target="_blank" rel="noreferrer">
+      {summary && (
+        <><div style={{ marginTop: "20px" }}>
+          <h3 align="center">Dataset Summary</h3>
+          <div align="center">
+            <p><strong>Total Records:</strong> {summary.total_count}</p>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center' , gap: '20px'}}>
+            <div>
+              <h4 align="center">Averages</h4>
+              <ul>
+                {Object.entries(summary.averages || {}).map(([key, value]) => (
+                  <li key={key}>{key}: {value}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 align="center">Equipment Distribution</h4>
+              <ul>
+                {Object.entries(summary.equipment_distribution || {}).map(([key, value]) => (
+                  <li key={key}>{key}: {value}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          </div>
+          <div align="center">
+            <button
+            style={{ marginTop: "15px" }}
+            onClick={() => window.open(summary.pdf_url,
+              "_blank")}>
               Download PDF
-            </a>
-          </li>
-        ))}
-      </ul>
+            </button>
+          </div>
+          </>
+      )}
+      <div align="center">
+        <h3>Last 5 uploads</h3>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <ul>
+            {datasets.map(d => (
+              <li key={d.id}>
+                {d.file.split("/").pop()}
+                {" "}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }

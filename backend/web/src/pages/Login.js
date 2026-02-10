@@ -26,10 +26,16 @@ export default function Login() {
 
     return (
         <div>
-            <h2>Login</h2>
-            <input placeholder="Username" onChange={e => setUsername(e.target.value)} />
-            <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
-            <button onClick={login}>Login</button>
+            <h2 align="center">Login</h2>
+            <div align="center">Username:
+                <input placeholder="Username" onChange={e => setUsername(e.target.value)} />
+                &emsp;&emsp;
+                Password:
+                <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
+                <br />
+                <br />
+                <button onClick={login}>Login</button>
+            </div>
         </div>
     );
 }
