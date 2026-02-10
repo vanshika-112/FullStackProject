@@ -1,6 +1,6 @@
 import sys
 import requests
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout,QFileDialog, QLabel, QLineEdit, QListWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QFileDialog, QLabel, QLineEdit, QListWidget
 from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -15,60 +15,56 @@ class App(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("CSV Analyzer Desktop App")
-        self.setGeometry(200, 200, 400, 300)
+        self.resize(600, 750)
 
         self.token = None  # JWT access token
 
         self.initUI()
 
     def initUI(self):
-        layout = QVBoxLayout()
+        with open("styles.css", "r") as f:
+            self.setStyleSheet(f.read())
+
+        self.layout = QVBoxLayout()
+        self.layout.setSpacing(10)
+        self.setLayout(self.layout)
+
+        self.layout.addStretch()
+
+        self.login_label = QLabel("LOGIN")
+        self.login_label.setStyleSheet("font-size: 21pt; font-family: Montserrat;")
+        self.login_label.setAlignment(Qt.AlignCenter)
+        self.layout.addWidget(self.login_label)
 
         # Username
-        layout.addWidget(QLabel("Username"))
+        self.row1 = QHBoxLayout()
+        self.user_label = QLabel("Username")
+        self.row1.addWidget(self.user_label)
         self.username_input = QLineEdit()
-        layout.addWidget(self.username_input)
+        self.row1.addWidget(self.username_input)
+        self.layout.addLayout(self.row1)
 
         # Password
-        layout.addWidget(QLabel("Password"))
+        self.row2 = QHBoxLayout()
+        self.pass_label = QLabel("Password")
+        self.row2.addWidget(self.pass_label)
         self.password_input = QLineEdit()
         self.password_input.setEchoMode(QLineEdit.Password)
-        layout.addWidget(self.password_input)
+        self.row2.addWidget(self.password_input)
+        self.layout.addLayout(self.row2)
 
         # Login button
         self.login_button = QPushButton("Login")
         self.login_button.clicked.connect(self.login)
-        layout.addWidget(self.login_button)
+        self.layout.addWidget(self.login_button)
 
         # Status label
-        self.status_label = QLabel("Please login")
+        self.status_label = QLabel("Please login!")
         self.status_label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(self.status_label)
+        self.layout.addWidget(self.status_label) 
 
-        # Upload button
-        self.upload_button = QPushButton("Upload CSV")
-        self.upload_button.setEnabled(False)
-        self.upload_button.clicked.connect(self.open_file)
-        layout.addWidget(self.upload_button)
+        self.layout.addStretch()
 
-        #history button
-        self.history_label = QLabel("Last 5 Uploads")
-        layout.addWidget(self.history_label)
-
-        self.history_list = QListWidget()
-        layout.addWidget(self.history_list) 
-
-        #Download button 
-        self.download_btn = QPushButton("Download PDF Report")
-        self.download_btn.setEnabled(False)
-        self.download_btn.clicked.connect(self.download_pdf)
-        layout.addWidget(self.download_btn)
-
-        # Chart canvas
-        self.canvas = MplCanvas(self)
-        layout.addWidget(self.canvas)
-
-        self.setLayout(layout)
 
     # ---------------- LOGIN ----------------
     def login(self):
@@ -95,9 +91,10 @@ class App(QWidget):
 
                 self.status_label.setText("Login successful ✅")
 
+                self.login_success()
                 self.load_last_five()
-
                 self.upload_button.setEnabled(True)
+
             else:
                 self.status_label.setText("Login failed ❌")
 
@@ -193,7 +190,7 @@ class App(QWidget):
         }
 
         response = requests.get(
-            "http://127.0.0.1:8000/datasets/last-five/",
+            "http://127.0.0.1:8000/api/datasets/last-five/",
             headers=headers
         )
 
@@ -208,12 +205,53 @@ class App(QWidget):
                     f"{filename}  |  {uploaded_at}"
                 )
         
-
-    
     def download_pdf(self):
         if hasattr(self, "pdf_url"):
             import webbrowser
             webbrowser.open(self.pdf_url)
+
+    def login_success(self):
+        self.username_input.hide()
+        self.password_input.hide()
+        self.login_button.hide()
+        self.status_label.hide()
+        self.user_label.hide()
+        self.pass_label.hide()
+        self.login_label.hide()
+
+        self.dashboard_label = QLabel("DASHBOARD")
+        self.dashboard_label.setStyleSheet("font-size: 21pt; font-family: Montserrat;")
+        self.dashboard_label.setAlignment(Qt.AlignCenter)
+        self.layout.addWidget(self.dashboard_label)
+
+        # Upload button
+        self.row3 = QHBoxLayout()
+        self.upload_label = QLabel("Upload your csv file here!")
+        self.row3.addWidget(self.upload_label)
+        self.upload_button = QPushButton("Upload")
+        self.upload_button.setEnabled(False)
+        self.upload_button.clicked.connect(self.open_file)
+        self.row3.addWidget(self.upload_button)
+        self.layout.addLayout(self.row3)
+
+        #history button
+        self.history_label = QLabel("Last 5 Uploads")
+        self.layout.addWidget(self.history_label)
+        self.history_list = QListWidget()
+        self.layout.addWidget(self.history_list)
+
+        # Chart canvas
+        self.canvas = MplCanvas(self)
+        self.layout.addWidget(self.canvas)
+
+        #Download button 
+        self.download_btn = QPushButton("Download PDF Report")
+        self.download_btn.setEnabled(False)
+        self.download_btn.clicked.connect(self.download_pdf)
+        self.layout.addWidget(self.download_btn)
+
+        self.setLayout(self.layout)
+
 
 
 # ---------------- MAIN ----------------
