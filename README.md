@@ -3,7 +3,7 @@
 
 <p>A full-stack application that allows users to upload CSV datasets, analyze data, visualize insights through charts, generate PDF reports, and access the system via both a web interface and a desktop application.</p>
 
-<p>
+<pre>
   <h4>Features</h4>
   1. Authentication
       -> JWT-based login system
@@ -28,7 +28,7 @@
       -> Web App: React
       -> Desktop App: PyQt5
       -> Backend API: Django + Django REST Framework
-</p>
+</pre>
 <p>
   <h4>Tech Stack</h4>
     <h5>Backend</h5>
@@ -56,7 +56,7 @@
 </p>
 <p>
   <h4>Project Structure</h4>
-  <p>
+  <pre>
     FullStackProject/
     │
     ├── backend/
@@ -74,11 +74,11 @@
     │   └── main.py
     │
     └── README.md
-  </p>
+  </pre>
 </p>
 <p>
 <h4> Setup Instructions</h4>
-  <p>
+  <pre>
     1️. Backend Setup
     cd backend
     python -m venv venv
@@ -102,7 +102,7 @@
     3️. PyQt Desktop App
     cd desktop_frontend
     python main.py
-</p>
+</pre>
 
 <h4>API Endpoints (Core)</h4>
   <pre>
@@ -115,10 +115,10 @@
   </pre>
   
 <h4>Authentication Flow</h4>
-  <p>
+  <pre>
     ->User logs in
     ->Backend returns JWT access & refresh tokens
     ->Token stored in local storage (web) / memory (desktop)
     ->Token sent in Authorization: Bearer <token> header
-  </p>
+  </pre>
 </p>
